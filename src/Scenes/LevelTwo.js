@@ -322,17 +322,17 @@ class LevelTwo extends Phaser.Scene {
         // Check for collision with the enemyShip
         for (let bullet of my.sprite.bullet) {
             if (enemyTwo.visible && this.collides(enemyShip, bullet, 0.5)) {
-                // start animation
                 this.explosion = this.add.sprite(enemyTwo.x, enemyTwo.y, "deathResult").setScale(0.25).play("explosion");
-                // clear out bullet -- put y offscreen, will get reaped next update
+                // clear bullets
                 bullet.y = -100;
                 enemyTwo.visible = false;
                 enemyTwo.x = -100;
-                // Update score
+                // update score
                 this.myScore += enemyTwo.scorePoints;
                 this.updateScore();
                 this.mySound.play({volume: 0.5});
-                // Have new enemyShip appear after end of animation, with fresh random motion
+
+                // spawn next enemy ship
                 this.time.delayedCall(200, () => {
                     this.explosion.destroy();
 
@@ -356,17 +356,17 @@ class LevelTwo extends Phaser.Scene {
         }
         for (let bullet of my.sprite.bullet) {
             if (enemyShip.visible && this.collides(enemyShip, bullet, 0.5)) {
-                // start animation
                 this.explosion = this.add.sprite(enemyShip.x, enemyShip.y, "deathResult").setScale(0.25).play("explosion");
-                // clear out bullet -- put y offscreen, will get reaped next update
+                // clear bullets
                 bullet.y = -100;
                 enemyShip.visible = false;
                 enemyShip.x = -100;
-                // Update score
+                // update score
                 this.myScore += enemyShip.scorePoints;
                 this.updateScore();
                 this.mySound.play({volume: 0.5});
-                // Have new enemyShip appear after end of animation, with fresh random motion
+
+                // next enemyship spawn
                 this.time.delayedCall(200, () => {
                     this.explosion.destroy();
 
@@ -389,7 +389,7 @@ class LevelTwo extends Phaser.Scene {
             }
         }
 
-        // Make all of the bullets move
+        // bullet motion
         for (let bullet of my.sprite.bullet) {
             bullet.y -= this.bulletSpeed * dt;
         }
@@ -431,7 +431,7 @@ class LevelTwo extends Phaser.Scene {
     }
 
 
-    // A center-radius AABB collision check
+    // A center-radius AABB collision check from audio practice in class assignment
     collides(a, b, shrink = 1) {
         if (Math.abs(a.x - b.x) > (a.displayWidth/2 + b.displayWidth/2) * shrink) return false;
         if (Math.abs(a.y - b.y) > (a.displayHeight/2 + b.displayHeight/2) * shrink) return false;
