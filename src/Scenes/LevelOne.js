@@ -99,15 +99,8 @@ class LevelOne extends Phaser.Scene {
         this.playerSpeed = 350;
         this.bulletSpeed = 275;
 
-        //text
-        my.text.score = this.add.bitmapText(580, 0, "rocketSquare", "Score " + this.myScore);
-        this.add.text(10, 5, "Defend The Tower!", {
-            fontFamily: 'Times, serif',
-            fontSize: 24,
-            wordWrap: {
-                width: 60
-            }
-        });
+
+        my.text.score = this.add.bitmapText(500, 0, "rocketSquare", "Score " + this.myScore);
         my.text.health = this.add.bitmapText(580, 40, "rocketSquare", "Health " + this.myHealth + "/15");
 
         //background audio

@@ -143,14 +143,7 @@ class LevelTwo extends Phaser.Scene {
 
         //text
         my.text.score = this.add.bitmapText(580, 0, "rocketSquare", "Score " + this.myScore);
-        this.add.text(10, 5, "Defend The Tower!", {
-            fontFamily: 'Times, serif',
-            fontSize: 24,
-            wordWrap: {
-                width: 60
-            }
-        });
-        my.text.health = this.add.bitmapText(580, 40, "rocketSquare", "Health " + this.myHealth + "/20");
+        my.text.health = this.add.bitmapText(500, 40, "rocketSquare", "Health " + this.myHealth + "/20");
 
         //background audio
         this.bgMusic = this.sound.add("music_bg");
@@ -220,7 +213,7 @@ class LevelTwo extends Phaser.Scene {
             this.shootSound.play({volume: 0.5});
             if (my.sprite.bullet.length < this.maxBullets) {
                 my.sprite.bullet.push(this.add.sprite(
-                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(5.0)
+                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(3.5).setTint(0x4444aa)
                 );
             }
         }
@@ -321,7 +314,7 @@ class LevelTwo extends Phaser.Scene {
         // Check for collision with the enemyShip
         // Check for collision with the enemyShip
         for (let bullet of my.sprite.bullet) {
-            if (enemyTwo.visible && this.collides(enemyShip, bullet, 0.5)) {
+            if (enemyTwo.visible && this.collides(enemyTwo, bullet, 0.5)) {
                 this.explosion = this.add.sprite(enemyTwo.x, enemyTwo.y, "deathResult").setScale(0.25).play("explosion");
                 // clear bullets
                 bullet.y = -100;

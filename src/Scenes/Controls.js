@@ -16,6 +16,8 @@ class Controls extends Phaser.Scene {
         //font
         this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
 
+        this.load.audio("menuMusic", "energysound-powerful-percussion-513717.mp3")
+
 
     }
 
@@ -30,6 +32,7 @@ class Controls extends Phaser.Scene {
             0x6a0dad
         );
 
+
         this.movingShip = this.add.sprite(100, 450, "enemyShip");
         this.movingShip.setScale(0.5);
         this.movingShip.vx = 120;   
@@ -40,7 +43,8 @@ class Controls extends Phaser.Scene {
         this.movingShipTwo.vx = -120;   
         this.movingShipTwo.vy = 80;  
 
-        
+        this.menuSound = this.sound.add("menuMusic");
+        this.menuSound.play({loop: true});
 
         this.add.bitmapText(
             game.config.width / 2, 
@@ -68,13 +72,15 @@ class Controls extends Phaser.Scene {
             340,
             "rocketSquare",
             "Level2 -> Q -> Special Ability",
-            48,
+            20,
         ).setOrigin(0.5,0.5);
 
         this.makeButton(game.config.width / 2, 500, "Back to Menu", () => {
             this.scene.start("startScreen");
             
         });
+
+        
 
 
     }

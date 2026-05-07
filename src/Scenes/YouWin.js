@@ -12,9 +12,12 @@ class YouWin extends Phaser.Scene {
         this.load.setPath("./assets/");
         //images
         this.load.image("enemyShip", "shipYellow_manned.png");
+        this.load.image("hooray", "hooray.png");
 
         //font
         this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
+
+        this.load.audio("menuMusic", "energysound-powerful-percussion-513717.mp3")
 
 
     }
@@ -40,20 +43,23 @@ class YouWin extends Phaser.Scene {
         this.movingShipTwo.vx = -120;   
         this.movingShipTwo.vy = 80;  
 
-        
+        this.menuSound = this.sound.add("menuMusic");
+        this.menuSound.play({loop: true});
 
         this.add.bitmapText(
             game.config.width / 2, 
             100,
             "rocketSquare",
             "CONGRATS!! YOU WON",
-            48,
+            30,
         ).setOrigin(0.5,0.5);
 
         this.makeButton(game.config.width / 2, 500, "Back to Menu", () => {
             this.scene.start("startScreen");
             
         });
+
+        this.add.image(game.config.width / 2, game.config.height / 2, "hooray");
 
 
     }
@@ -66,10 +72,7 @@ class YouWin extends Phaser.Scene {
         button.on("pointerdown", () => {
             onClick();
         });
-
-        
-    }
-
+    };
 
     update(time, delta) {
         let dt = delta / 1000;
@@ -92,7 +95,7 @@ class YouWin extends Phaser.Scene {
         if(shipTwo.x < 0){
             shipTwo.x = 700;
         }
-        if(shipTwo.y > 0){
+        if(shipTwo.y > game.config.heigt){
             shipTwo.y = 50;
         }
     
