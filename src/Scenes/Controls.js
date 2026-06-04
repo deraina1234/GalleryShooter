@@ -29,26 +29,16 @@ class Controls extends Phaser.Scene { //This is Anthony
             game.config.height / 2,
             game.config.width, 
             game.config.height,
-            0x6a0dad
+            0x000000
         );
 
-
-        this.movingShip = this.add.sprite(100, 450, "enemyShip");
-        this.movingShip.setScale(0.5);
-        this.movingShip.vx = 120;   
-        this.movingShip.vy = 80;  
-
-        this.movingShipTwo = this.add.sprite(700, 450, "enemyShip");
-        this.movingShipTwo.setScale(0.5);
-        this.movingShipTwo.vx = -120;   
-        this.movingShipTwo.vy = 80;  
 
         this.menuSound = this.sound.add("menuMusic");
         this.menuSound.play({loop: true});
 
         this.add.bitmapText(
             game.config.width / 2, 
-            100,
+            70,
             "rocketSquare",
             "DEFEND YOUR TOWER",
             48,
@@ -57,22 +47,22 @@ class Controls extends Phaser.Scene { //This is Anthony
             game.config.width / 2, 
             180,
             "rocketSquare",
-            "A -> Left, D -> Right",
+            "A -> Left\nD -> Right",
             48,
         ).setOrigin(0.5,0.5);
         this.add.bitmapText(
             game.config.width / 2, 
             260,
             "rocketSquare",
-            "Space = Shoot",
+            "Space -> Shoot",
             48,
         ).setOrigin(0.5,0.5);
         this.add.bitmapText(
             game.config.width / 2, 
-            340,
+            400,
             "rocketSquare",
-            "Level2 -> Q -> Special Ability",
-            20,
+            "Level2 -> Q -> Special Ability1\nLevel3 -> V -> Special Ability2\nBoss Fight -> T -> Special Ability3",
+            30,
         ).setOrigin(0.5,0.5);
 
         this.makeButton(game.config.width / 2, 500, "Back to Menu", () => {
@@ -101,30 +91,7 @@ class Controls extends Phaser.Scene { //This is Anthony
 
 
     update(time, delta) {
-        let dt = delta / 1000;
-        let ship = this.movingShip;
-        let shipTwo = this.movingShipTwo;
-    
-        // Move the ship by its velocity
-        ship.x += ship.vx * dt;
-        ship.y += ship.vy * dt;
 
-        shipTwo.x += shipTwo.vx * dt;
-        shipTwo.y += shipTwo.vy * dt;
-
-        if(ship.x > game.config.width){
-            ship.x = 0;
-        }
-        if(ship.y > game.config.height){
-            ship.y = 0;
-        }
-        if(shipTwo.x < 0){
-            shipTwo.x = 700;
-        }
-        if(shipTwo.y > 0){
-            shipTwo.y = 50;
-        }
-    
     }
 
 }

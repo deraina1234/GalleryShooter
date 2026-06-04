@@ -23,7 +23,7 @@ class LevelTwo extends Phaser.Scene {
         // all sprites loaded
         this.load.image("player", "player_back.png");
         this.load.image("laser", "midnight_22.png");
-        this.load.image("special", "shield3.png");
+        this.load.image("special", "lasershieldnice.png");
         this.load.image("enemyLaser", "laserRed02.png");
         this.load.image("enemyShip", "shipYellow_manned.png");
         this.load.image("enemyTwo", "shipBlue_manned.png");
@@ -219,7 +219,7 @@ class LevelTwo extends Phaser.Scene {
             this.shootSound.play({volume: 0.5});
             if (my.sprite.bullet.length < this.maxBullets) {
                 my.sprite.bullet.push(this.add.sprite(
-                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(3.5).setTint(0x4444aa)
+                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(2.5).setTint(0x4444aa)
                 );
             }
         }

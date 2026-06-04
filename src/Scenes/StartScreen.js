@@ -31,7 +31,7 @@ class StartScreen extends Phaser.Scene {
             game.config.height / 2,
             game.config.width, 
             game.config.height,
-            0x6a0dad
+            0x000000
         );
 
         this.movingShip = this.add.sprite(100, 450, "enemyShip");
@@ -39,10 +39,15 @@ class StartScreen extends Phaser.Scene {
         this.movingShip.vx = 120;   
         this.movingShip.vy = 80;  
 
-        this.movingShipTwo = this.add.sprite(700, 450, "enemyShip");
+        this.movingShipTwo = this.add.sprite(700, 200, "enemyShip");
         this.movingShipTwo.setScale(0.5);
         this.movingShipTwo.vx = -120;   
         this.movingShipTwo.vy = 80;  
+
+        this.movingShipThree = this.add.sprite(400, 200, "enemyShip");
+        this.movingShipThree.setScale(0.5);
+        this.movingShipThree.vx = -90;   
+        this.movingShipThree.vy = 80;
 
         
 
@@ -86,7 +91,6 @@ class StartScreen extends Phaser.Scene {
         });
 
         
-        
     }
 
 
@@ -95,13 +99,16 @@ class StartScreen extends Phaser.Scene {
         let dt = delta / 1000;
         let ship = this.movingShip;
         let shipTwo = this.movingShipTwo;
+        let shipThree = this.movingShipThree
     
-        // Move the ship by its velocity
         ship.x += ship.vx * dt;
         ship.y += ship.vy * dt;
 
         shipTwo.x += shipTwo.vx * dt;
         shipTwo.y += shipTwo.vy * dt;
+
+        shipThree.x += shipThree.vx * dt;
+        shipThree.y += shipThree.vy * dt;
 
         if(ship.x > game.config.width){
             ship.x = 0;
@@ -112,8 +119,14 @@ class StartScreen extends Phaser.Scene {
         if(shipTwo.x < 0){
             shipTwo.x = 700;
         }
-        if(shipTwo.y > 0){
+        if(shipTwo.y > 650){
             shipTwo.y = 50;
+        }
+        if(shipThree.x < 0){
+            shipThree.x = 700;
+        }
+        if(shipThree.y > 650){
+            shipThree.y = 50;
         }
     
     }
