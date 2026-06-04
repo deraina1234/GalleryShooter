@@ -17,9 +17,9 @@ class LevelOne extends Phaser.Scene {
         this.load.image("player", "player_back.png");
         this.load.image("laser", "midnight_22.png");
         this.load.image("enemyShip", "shipYellow_manned.png");
-        this.load.image("tower", "tower_10.png")
-        this.load.image("tower2", "tower_10.png")
-        this.load.image("tower3", "tower_10.png")
+        this.load.image("tower", "pieceGreen_single09.png")
+        // this.load.image("tower2", "tower_10.png")
+        // this.load.image("tower3", "tower_10.png")
         this.load.image("deathResult", "laserPink_groundBurst.png");
 
         this.load.image("stars", "starsbackground.webp")
@@ -66,12 +66,12 @@ class LevelOne extends Phaser.Scene {
         my.sprite.player = this.add.sprite((game.config.width/2), game.config.height - 35, "player");
         my.sprite.player.setScale(1.00);
 
-        my.sprite.tower = this.add.sprite((0.9 * game.config.width), (0.85 * game.config.height), "tower");
-        my.sprite.tower.setScale(1.75);
-        my.sprite.tower = this.add.sprite((0.92 * game.config.width), (0.75 * game.config.height), "tower3");
-        my.sprite.tower.setScale(1.75);
-        my.sprite.tower = this.add.sprite((0.85 * game.config.width), (0.8 * game.config.height), "tower2");
-        my.sprite.tower.setScale(1.75);
+        my.sprite.tower = this.add.sprite((0.9 * game.config.width), (0.85 * game.config.height) + 40, "tower");
+        my.sprite.tower.setScale(2.5);
+        // my.sprite.tower = this.add.sprite((0.92 * game.config.width), (0.75 * game.config.height), "tower3");
+        // my.sprite.tower.setScale(1.75);
+        // my.sprite.tower = this.add.sprite((0.85 * game.config.width), (0.8 * game.config.height), "tower2");
+        // my.sprite.tower.setScale(1.75);
         
         this.enemyShipStartY = 80;
         my.sprite.enemyShip = this.add.sprite(Math.random() * game.config.width/2, this.enemyShipStartY, "enemyShip");

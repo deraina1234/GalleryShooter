@@ -23,31 +23,31 @@ class LevelTwo extends Phaser.Scene {
         // all sprites loaded
         this.load.image("player", "player_back.png");
         this.load.image("laser", "midnight_22.png");
-        this.load.image("special", "shield3.png")
-        this.load.image("enemyLaser", "laserBlue1.png")
+        this.load.image("special", "shield3.png");
+        this.load.image("enemyLaser", "laserRed02.png");
         this.load.image("enemyShip", "shipYellow_manned.png");
-        this.load.image("enemyTwo", "shipBlue_manned.png")
-        this.load.image("tower", "tower_10.png")
-        this.load.image("tower2", "tower_10.png")
-        this.load.image("tower3", "tower_10.png")
-
-        this.load.image("tower4", "tower_10.png")
-        this.load.image("tower5", "tower_10.png")
-        this.load.image("tower6", "tower_10.png")
+        this.load.image("enemyTwo", "shipBlue_manned.png");
+        this.load.image("tower", "pieceGreen_single09.png");
+        this.load.image("tower2", "pieceGreen_single09.png");
+        // this.load.image("tower2", "tower_10.png");
+        // this.load.image("tower3", "tower_10.png");
+        // this.load.image("tower4", "tower_10.png");
+        // this.load.image("tower5", "tower_10.png");
+        // this.load.image("tower6", "tower_10.png");
         this.load.image("deathResult", "laserPink_groundBurst.png");
 
         //background
-        this.load.image("stars", "starsbackground.webp")
+        this.load.image("stars", "starsbackground.webp");
 
         //font
         this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
 
         //audios
-        this.load.audio("laser_sect", "impactMetal_light_003.ogg")
-        this.load.audio("music_bg", "magpiemusic-action-trailer-promo-rock-513687.mp3")
-        this.load.audio("user_click", "click1.ogg")
-        this.load.audio("shoot", "laserSmall_001.ogg")
-        this.load.audio("death", "jingles_PIZZI11.ogg")
+        this.load.audio("laser_sect", "impactMetal_light_003.ogg");
+        this.load.audio("music_bg", "magpiemusic-action-trailer-promo-rock-513687.mp3");
+        this.load.audio("user_click", "click1.ogg");
+        this.load.audio("shoot", "laserSmall_001.ogg");
+        this.load.audio("death", "jingles_PIZZI11.ogg");
     }
 
     create() {
@@ -84,20 +84,12 @@ class LevelTwo extends Phaser.Scene {
 
 
         //right tower
-        my.sprite.tower = this.add.sprite((0.9 * game.config.width), (0.85 * game.config.height), "tower");
-        my.sprite.tower.setScale(1.75);
-        my.sprite.tower = this.add.sprite((0.92 * game.config.width), (0.75 * game.config.height), "tower3");
-        my.sprite.tower.setScale(1.75);
-        my.sprite.tower = this.add.sprite((0.85 * game.config.width), (0.8 * game.config.height), "tower2");
-        my.sprite.tower.setScale(1.75);
+        my.sprite.tower = this.add.sprite((0.9 * game.config.width), (0.85 * game.config.height) + 40, "tower");
+        my.sprite.tower.setScale(2.5);
 
         //left tower
-        my.sprite.towerTwo = this.add.sprite((0.1 * game.config.width), (0.85 * game.config.height), "tower4");
-        my.sprite.towerTwo.setScale(1.75);
-        my.sprite.towerTwo = this.add.sprite((0.08 * game.config.width), (0.75 * game.config.height), "tower5");
-        my.sprite.towerTwo.setScale(1.75);
-        my.sprite.towerTwo = this.add.sprite((0.15 * game.config.width), (0.8 * game.config.height), "tower6");
-        my.sprite.towerTwo.setScale(1.75);
+        my.sprite.towerTwo = this.add.sprite((0.1 * game.config.width), (0.85 * game.config.height) + 40, "tower2");
+        my.sprite.towerTwo.setScale(2.5);
 
         //enemy1
         this.enemyShipStartY = 80;
@@ -119,8 +111,10 @@ class LevelTwo extends Phaser.Scene {
         my.sprite.enemyTwo.setScale(0.50);
         my.sprite.enemyTwo.scorePoints = 15;
 
-        let dx2 = my.sprite.towerTwo.x - my.sprite.enemyTwo.x
-        let dy2 = my.sprite.towerTwo.y - my.sprite.enemyTwo.y
+        my.sprite.enemyTwo.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
+
+        let dx2 = my.sprite.enemyTwo.targetTower.x - my.sprite.enemyTwo.x;
+        let dy2 = my.sprite.enemyTwo.targetTower.y - my.sprite.enemyTwo.y;
 
         let distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
 
@@ -160,15 +154,27 @@ class LevelTwo extends Phaser.Scene {
                 }
 
                 let bullet = this.add.sprite(my.sprite.enemyTwo.x, my.sprite.enemyTwo.y, "enemyLaser");
-                bullet.setScale(0.5);
+                bullet.setScale(1.5);
+                let targetTower;
 
-                let dx = my.sprite.towerTwo.x - my.sprite.enemyTwo.x;
-                let dy = my.sprite.towerTwo.y - my.sprite.enemyTwo.y;
+                if(Math.random() < 0.5){
+                    targetTower = my.sprite.towerTwo;  // left tower
+                } 
+                else{
+                    targetTower = my.sprite.tower;     // right tower
+                }
+
+                let dx = targetTower.x - my.sprite.enemyTwo.x;
+                let dy = targetTower.y - my.sprite.enemyTwo.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 let speed = 250;
 
                 bullet.vx = (dx / distance) * speed;
                 bullet.vy = (dy / distance) * speed;
+
+                bullet.rotation = Math.atan2(dy, dx) + Math.PI / 2;
+
+                bullet.targetTower = targetTower;
 
                 my.sprite.enemyBullet.push(bullet);
                 
@@ -251,11 +257,13 @@ class LevelTwo extends Phaser.Scene {
                 
                 
                 if (enemyTwo.y > game.config.height || enemyTwo.x > game.config.width) {
-                    enemyTwo.x = Math.random() * (game.config.width/2);
+                    enemyTwo.x = Math.random() * game.config.width;
                     enemyTwo.y = 80;
 
-                    let dx = my.sprite.tower.x - enemyTwo.x
-                    let dy = my.sprite.tower.y - enemyTwo.y
+                    enemyTwo.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
+
+                    let dx = enemyTwo.targetTower.x - enemyTwo.x;
+                    let dy = enemyTwo.targetTower.y - enemyTwo.y;
 
                     let distance = Math.sqrt(dx * dx + dy * dy);
                     let speed = 95;
@@ -287,9 +295,7 @@ class LevelTwo extends Phaser.Scene {
                     enemyShip.vx = (dx / distance) * speed;
                     enemyShip.vy = (dy / distance) * speed;
         }
-        if (enemyTwo.visible && this.collides(enemyTwo, my.sprite.tower)){
-
-
+        if (enemyTwo.visible && this.collides(enemyTwo, enemyTwo.targetTower)){
             this.myScore -= 10;
             this.updateScore();
 
@@ -298,17 +304,19 @@ class LevelTwo extends Phaser.Scene {
 
             this.deathSound.play({volume: 2.0});
 
-            enemyTwo.x = Math.random() * (game.config.width/2);
-                    enemyTwo.y = 80;
+            enemyTwo.x = Math.random() * game.config.width;
+            enemyTwo.y = 80;
 
-                    let dx = my.sprite.tower.x - enemyTwo.x
-                    let dy = my.sprite.tower.y - enemyTwo.y
+            enemyTwo.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
 
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    let speed = 95;
+            let dx = enemyTwo.targetTower.x - enemyTwo.x;
+            let dy = enemyTwo.targetTower.y - enemyTwo.y;
 
-                    enemyTwo.vx = (dx / distance) * speed;
-                    enemyTwo.vy = (dy / distance) * speed;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            let speed = 95;
+
+            enemyTwo.vx = (dx / distance) * speed;
+            enemyTwo.vy = (dy / distance) * speed;
         }
 
         // Check for collision with the enemyShip
@@ -332,11 +340,13 @@ class LevelTwo extends Phaser.Scene {
                     let h = this.my.sprite.enemyTwo;
                     h.visible = true;
                     
-                    enemyTwo.x = Math.random() * (game.config.width/2);
+                    enemyTwo.x = Math.random() * game.config.width;
                     enemyTwo.y = 80;
 
-                    let dx = my.sprite.tower.x - enemyTwo.x
-                    let dy = my.sprite.tower.y - enemyTwo.y
+                    enemyTwo.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
+
+                    let dx = enemyTwo.targetTower.x - enemyTwo.x;
+                    let dy = enemyTwo.targetTower.y - enemyTwo.y;
 
                     let distance = Math.sqrt(dx * dx + dy * dy);
                     let speed = 95;
@@ -391,8 +401,9 @@ class LevelTwo extends Phaser.Scene {
         my.sprite.enemyBullet = my.sprite.enemyBullet.filter((bullet) => {
             bullet.x += bullet.vx * dt;
             bullet.y += bullet.vy * dt;
+
         
-            if (this.collides(bullet, my.sprite.towerTwo)) {
+            if (this.collides(bullet, bullet.targetTower)) {
                 this.myScore -= 10;
                 this.updateScore();
                 this.myHealth -= 1;
