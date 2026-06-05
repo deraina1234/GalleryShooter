@@ -22,7 +22,7 @@ class LevelOne extends Phaser.Scene {
         // this.load.image("tower3", "tower_10.png")
         this.load.image("deathResult", "laserPink_groundBurst.png");
 
-        this.load.image("stars", "starsbackground.webp")
+        //this.load.image("stars", "starsbackground.webp")
 
         this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
 
@@ -36,7 +36,7 @@ class LevelOne extends Phaser.Scene {
     create() {
         let my = this.my;
 
-        this.add.image(game.config.width / 2, game.config.height / 2, "stars").setDisplaySize(game.config.width, game.config.height);
+        //this.add.image(game.config.width / 2, game.config.height / 2, "stars").setDisplaySize(game.config.width, game.config.height);
 
         this.gameStarted = false;
 
@@ -50,6 +50,23 @@ class LevelOne extends Phaser.Scene {
             0.8
 
         );
+        //pixel stars
+        let stars = this.add.graphics();
+
+        //spawn 119 stars randomly across the canvas
+        for(let i = 0; i < 120; i++){
+            let x = Phaser.Math.Between(0, 800);
+            let y = Phaser.Math.Between(0, 600);
+
+            //make some stars white and some grey
+            let color = Phaser.Math.Between(0, 1) === 0 ? 0xffffff : 0x777777;
+
+            stars.fillStyle(color, 1);
+
+            //some stars are 1x1 and some are 2x2
+            let size = Phaser.Math.Between(1, 2);
+            stars.fillRect(x, y, size, size);
+        }
 
         // countdown text so the player doesn't immediately have to start playing
 

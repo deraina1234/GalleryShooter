@@ -9,7 +9,7 @@ let config = {
     },
     width: 800,
     height: 600,
-    scene: [StartScreen, LevelOne, Controls, LevelTwo, YouLose, YouWin]
+    scene: [StartScreen, LevelOne, BossBattle, Controls, LevelTwo, YouLose, YouWin]
 }
 
 

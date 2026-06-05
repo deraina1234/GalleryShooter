@@ -33,6 +33,23 @@ class StartScreen extends Phaser.Scene {
             game.config.height,
             0x000000
         );
+        //pixel stars
+        let stars = this.add.graphics();
+
+        //spawn 119 stars randomly across the canvas
+        for(let i = 0; i < 120; i++){
+            let x = Phaser.Math.Between(0, 800);
+            let y = Phaser.Math.Between(0, 600);
+
+            //make some stars white and some grey
+            let color = Phaser.Math.Between(0, 1) === 0 ? 0xffffff : 0x777777;
+
+            stars.fillStyle(color, 1);
+
+            //some stars are 1x1 and some are 2x2
+            let size = Phaser.Math.Between(1, 2);
+            stars.fillRect(x, y, size, size);
+        }
 
         this.movingShip = this.add.sprite(100, 450, "enemyShip");
         this.movingShip.setScale(0.5);

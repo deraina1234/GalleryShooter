@@ -46,8 +46,8 @@ class BossBattle extends Phaser.Scene {
 
         //spawn 119 stars randomly across the canvas
         for(let i = 0; i < 120; i++){
-            let x = Phaser.Math.Between(0, 600);
-            let y = Phaser.Math.Between(0, 700);
+            let x = Phaser.Math.Between(0, 800);
+            let y = Phaser.Math.Between(0, 600);
 
             //make some stars white and some grey
             let color = Phaser.Math.Between(0, 1) === 0 ? 0xffffff : 0x777777;
