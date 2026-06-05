@@ -11,6 +11,15 @@ class LevelOne extends Phaser.Scene {
         this.myHealth = 15;
     }
 
+    init() {
+    this.myScore = 0;
+    this.myHealth = 15;
+
+    this.my.sprite.bullet = [];
+
+    this.gameStarted = false;
+    }
+
     preload() {
 
         this.load.setPath("./assets/");
@@ -124,7 +133,10 @@ class LevelOne extends Phaser.Scene {
         this.bgMusic = this.sound.add("music_bg");
         this.bgMusic.play({loop: true, volume: 0.5});
 
-        
+        this.events.once("shutdown", () => {
+            this.bgMusic.stop();
+            this.bgMusic.destroy();
+        });
 
     }
 

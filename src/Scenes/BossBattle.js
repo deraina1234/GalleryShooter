@@ -12,6 +12,15 @@ class BossBattle extends Phaser.Scene {
         this.myHealth = 15;
     }
 
+    init() {
+    this.myScore = 0;
+    this.myHealth = 15;
+
+    this.my.sprite.bullet = [];
+
+    this.gameStarted = false;
+    }
+
 
     preload() {
 

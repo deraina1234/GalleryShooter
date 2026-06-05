@@ -16,6 +16,17 @@ class LevelTwo extends Phaser.Scene {
         this.shield = null;
     }
 
+    init() {
+        this.myScore = 0;
+        this.myHealth = 20;
+
+        this.my.sprite.bullet = [];
+        this.my.sprite.enemyBullet = [];
+
+        this.gameStarted = false;
+        this.shield = null;
+    }
+
     preload() {
 
         this.load.setPath("./assets/");
@@ -160,6 +171,11 @@ class LevelTwo extends Phaser.Scene {
         //background audio
         this.bgMusic = this.sound.add("music_bg");
         this.bgMusic.play({loop: true, volume: 0.5});
+
+        this.events.once("shutdown", () => {
+            this.bgMusic.stop();
+            this.bgMusic.destroy();
+        });
 
 
         // every three seconds the enemy will shoot a laser
@@ -442,7 +458,7 @@ class LevelTwo extends Phaser.Scene {
 
         if (this.myScore >= 150){
             this.bgMusic.stop();
-            this.scene.start("BossBattle");
+            this.scene.start("YouWin");
         }
 
         if (this.myHealth <= 0){

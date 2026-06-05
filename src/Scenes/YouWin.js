@@ -46,6 +46,11 @@ class YouWin extends Phaser.Scene {
         this.menuSound = this.sound.add("menuMusic");
         this.menuSound.play({loop: true});
 
+        this.events.once("shutdown", () => {
+            this.menuSound.stop();
+            this.menuSound.destroy();
+        });
+
         this.add.bitmapText(
             game.config.width / 2, 
             100,

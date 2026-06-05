@@ -89,9 +89,9 @@ class StartScreen extends Phaser.Scene {
         this.menuSound = this.sound.add("menuMusic");
         this.menuSound.play({loop: true});
 
-        
-        this.events.on("shutdown", () => {
+        this.events.once("shutdown", () => {
             this.menuSound.stop();
+            this.menuSound.destroy();
         });
         
 
