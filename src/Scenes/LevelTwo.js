@@ -7,7 +7,9 @@ class LevelTwo extends Phaser.Scene {
         this.my.sprite.bullet = [];   
         this.maxBullets = 5;
 
-        // enemytwo will emmit a bullet
+        this.specialUsed = 0;
+        this.maxSpecial = 3;
+
         this.my.sprite.enemyBullet = [];
         
         this.myScore = 0;
@@ -22,6 +24,8 @@ class LevelTwo extends Phaser.Scene {
 
         this.my.sprite.bullet = [];
         this.my.sprite.enemyBullet = [];
+
+        this.specialUsed = 0;
 
         this.gameStarted = false;
         this.shield = null;
@@ -40,15 +44,7 @@ class LevelTwo extends Phaser.Scene {
         this.load.image("enemyTwo", "shipBlue_manned.png");
         this.load.image("tower", "pieceGreen_single09.png");
         this.load.image("tower2", "pieceGreen_single09.png");
-        // this.load.image("tower2", "tower_10.png");
-        // this.load.image("tower3", "tower_10.png");
-        // this.load.image("tower4", "tower_10.png");
-        // this.load.image("tower5", "tower_10.png");
-        // this.load.image("tower6", "tower_10.png");
         this.load.image("deathResult", "laserPink_groundBurst.png");
-
-        //background
-        //this.load.image("stars", "starsbackground.webp");
 
         //font
         this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
@@ -59,6 +55,7 @@ class LevelTwo extends Phaser.Scene {
         this.load.audio("user_click", "click1.ogg");
         this.load.audio("shoot", "laserSmall_001.ogg");
         this.load.audio("death", "jingles_PIZZI11.ogg");
+        this.load.audio("specialOut", "freesound_community-wrong-47985.mp3");
     }
 
     create() {
@@ -155,11 +152,13 @@ class LevelTwo extends Phaser.Scene {
         this.mySound = this.sound.add("laser_sect");
         this.shootSound = this.sound.add("shoot");
         this.deathSound = this.sound.add("death");
+        this.specialOutSound = this.sound.add("specialOut");
 
         this.left = this.input.keyboard.addKey("A");
         this.right = this.input.keyboard.addKey("D");
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.q = this.input.keyboard.addKey("Q");
+
 
         this.playerSpeed = 350;
         this.bulletSpeed = 275;
@@ -167,10 +166,11 @@ class LevelTwo extends Phaser.Scene {
         //text
         my.text.score = this.add.bitmapText(580, 0, "rocketSquare", "Score " + this.myScore);
         my.text.health = this.add.bitmapText(500, 40, "rocketSquare", "Health " + this.myHealth + "/20");
+        my.text.special = this.add.bitmapText(520, 80, "rocketSquare", "Special " + (this.maxSpecial - this.specialUsed) + "/" + this.maxSpecial);
 
         //background audio
         this.bgMusic = this.sound.add("music_bg");
-        this.bgMusic.play({loop: true, volume: 0.5});
+        this.bgMusic.play({loop: true, volume: 0.2});
 
         this.events.once("shutdown", () => {
             this.bgMusic.stop();
@@ -250,11 +250,15 @@ class LevelTwo extends Phaser.Scene {
         }
 
         if (Phaser.Input.Keyboard.JustDown(this.q)) {
-            this.shootSound.play({volume: 0.5});
-            if (my.sprite.bullet.length < this.maxBullets) {
+            if (this.specialUsed < this.maxSpecial) {
+                this.shootSound.play({volume: 0.5});
                 my.sprite.bullet.push(this.add.sprite(
-                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(2.5).setTint(0x4444aa)
+                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(1.3).setTint(0x4444aa)
                 );
+                this.specialUsed += 1;
+                this.updateSpecial();
+            }  else {
+                this.specialOutSound.play({volume: 2.0});
             }
         }
 
@@ -484,6 +488,11 @@ class LevelTwo extends Phaser.Scene {
     updatehealth(){
         let my = this.my;
         my.text.health.setText("Health " + this.myHealth + "/20");
+    }
+
+    updateSpecial(){
+        let my = this.my;
+        my.text.special.setText("Special " + (this.maxSpecial - this.specialUsed) + "/" + this.maxSpecial);
     }
 
 }
