@@ -495,4 +495,38 @@ class LevelTwo extends Phaser.Scene {
         my.text.special.setText("Special " + (this.maxSpecial - this.specialUsed) + "/" + this.maxSpecial);
     }
 
+    pauseGame() {
+        if (this.paused) return;
+        this.paused = true;
+    
+        this.overlay.setVisible(true);
+    
+        this.title = this.add.bitmapText(game.config.width / 2, 200, "rocketSquare", "PAUSED", 48).setOrigin(0.5, 0.5);
+    
+        this.continueGame = this.add.bitmapText(game.config.width / 2, 290, "rocketSquare", "CONTINUE", 32).setOrigin(0.5, 0.5);
+        this.continueGame.setInteractive();
+        this.continueGame.on("pointerover", () => this.continueGame.setScale(1.2));
+        this.continueGame.on("pointerout", () => this.continueGame.setScale(1));
+        this.continueGame.on("pointerdown", () => this.resumeGame());
+    
+        this.returnMenu = this.add.bitmapText(game.config.width / 2, 350, "rocketSquare", "MAIN MENU", 32).setOrigin(0.5, 0.5);
+        this.returnMenu.setInteractive();
+        this.returnMenu.on("pointerover", () => this.returnMenu.setScale(1.2));
+        this.returnMenu.on("pointerout", () => this.returnMenu.setScale(1));
+
+        this.returnMenu.on("pointerdown", () => {
+            this.bgMusic.stop();
+            this.scene.start("startScreen");
+        });
+    }
+    
+    resumeGame() {
+        this.paused = false;
+        this.overlay.setVisible(false);
+    
+        this.title.destroy();
+        this.continueGame.destroy();
+        this.returnMenu.destroy();
+    }
+
 }

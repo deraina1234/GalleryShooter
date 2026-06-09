@@ -101,6 +101,18 @@ class StartScreen extends Phaser.Scene {
         const button = this.add.bitmapText(x, y, "rocketSquare", text, 28);
         button.setOrigin(0.5, 0.5);
         button.setInteractive();
+
+        button.on("pointerover", () => {
+            button.setScale(1.2);
+        });
+    
+        button.on("pointerout", () => {
+            button.setScale(1);
+        });
+    
+        button.on("pointerdown", () => {
+            onClick();
+        });
     
         button.on("pointerdown", () => {
             

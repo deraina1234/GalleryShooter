@@ -18,6 +18,7 @@ class LevelOne extends Phaser.Scene {
     this.my.sprite.bullet = [];
 
     this.gameStarted = false;
+    this.paused = false;
     }
 
     preload() {
@@ -88,16 +89,11 @@ class LevelOne extends Phaser.Scene {
         this.time.delayedCall(3000, () => {this.overlay.setVisible(false); this.countdownText.setVisible(false); this.gameStarted = true;});
 
        
-        // all objects on screen, adjusting scale, and placing them
         my.sprite.player = this.add.sprite((game.config.width/2), game.config.height - 35, "player");
         my.sprite.player.setScale(1.00);
 
         my.sprite.tower = this.add.sprite((0.9 * game.config.width), (0.85 * game.config.height) + 40, "tower");
         my.sprite.tower.setScale(2.5);
-        // my.sprite.tower = this.add.sprite((0.92 * game.config.width), (0.75 * game.config.height), "tower3");
-        // my.sprite.tower.setScale(1.75);
-        // my.sprite.tower = this.add.sprite((0.85 * game.config.width), (0.8 * game.config.height), "tower2");
-        // my.sprite.tower.setScale(1.75);
         
         this.enemyShipStartY = 80;
         my.sprite.enemyShip = this.add.sprite(Math.random() * game.config.width/2, this.enemyShipStartY, "enemyShip");
@@ -121,6 +117,7 @@ class LevelOne extends Phaser.Scene {
         this.left = this.input.keyboard.addKey("A");
         this.right = this.input.keyboard.addKey("D");
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         this.playerSpeed = 350;
         this.bulletSpeed = 275;
@@ -146,6 +143,12 @@ class LevelOne extends Phaser.Scene {
         let dt = delta / 1000;
 
         if(!this.gameStarted){
+            return;
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.escKey)) {
+            this.pauseGame();
+        }
+        if (this.paused) {
             return;
         }
 
@@ -292,6 +295,40 @@ class LevelOne extends Phaser.Scene {
     updatehealth(){
         let my = this.my;
         my.text.health.setText("Health " + this.myHealth + "/15");
+    }
+
+    pauseGame() {
+        if (this.paused) return;
+        this.paused = true;
+    
+        this.overlay.setVisible(true);
+    
+        this.title = this.add.bitmapText(game.config.width / 2, 200, "rocketSquare", "PAUSED", 48).setOrigin(0.5, 0.5);
+    
+        this.continueGame = this.add.bitmapText(game.config.width / 2, 290, "rocketSquare", "CONTINUE", 32).setOrigin(0.5, 0.5);
+        this.continueGame.setInteractive();
+        this.continueGame.on("pointerover", () => this.continueGame.setScale(1.2));
+        this.continueGame.on("pointerout", () => this.continueGame.setScale(1));
+        this.continueGame.on("pointerdown", () => this.resumeGame());
+    
+        this.returnMenu = this.add.bitmapText(game.config.width / 2, 350, "rocketSquare", "MAIN MENU", 32).setOrigin(0.5, 0.5);
+        this.returnMenu.setInteractive();
+        this.returnMenu.on("pointerover", () => this.returnMenu.setScale(1.2));
+        this.returnMenu.on("pointerout", () => this.returnMenu.setScale(1));
+
+        this.returnMenu.on("pointerdown", () => {
+            this.bgMusic.stop();
+            this.scene.start("startScreen");
+        });
+    }
+    
+    resumeGame() {
+        this.paused = false;
+        this.overlay.setVisible(false);
+    
+        this.title.destroy();
+        this.continueGame.destroy();
+        this.returnMenu.destroy();
     }
 
 }
