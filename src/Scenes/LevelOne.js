@@ -123,8 +123,8 @@ class LevelOne extends Phaser.Scene {
         this.bulletSpeed = 275;
 
 
-        my.text.score = this.add.bitmapText(500, 0, "rocketSquare", "Score " + this.myScore);
-        my.text.health = this.add.bitmapText(580, 40, "rocketSquare", "Health " + this.myHealth + "/15");
+        my.text.score = this.add.bitmapText(600, 0, "rocketSquare", "Score " + this.myScore);
+        my.text.health = this.add.bitmapText(500, 40, "rocketSquare", "Health " + this.myHealth + "/15");
 
         //background audio
         this.bgMusic = this.sound.add("music_bg");
