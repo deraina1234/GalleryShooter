@@ -480,7 +480,7 @@ class LevelTwo extends Phaser.Scene {
 
         if (this.myScore >= 150){
             this.bgMusic.stop();
-            this.scene.start("YouWin");
+            this.scene.start("BossBattle");
         }
 
     }
