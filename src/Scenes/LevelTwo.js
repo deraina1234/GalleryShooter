@@ -28,6 +28,8 @@ class LevelTwo extends Phaser.Scene {
         this.specialUsed = 0;
 
         this.gameStarted = false;
+        this.paused = false;
+
         this.shield = null;
     }
 
@@ -158,6 +160,7 @@ class LevelTwo extends Phaser.Scene {
         this.right = this.input.keyboard.addKey("D");
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.q = this.input.keyboard.addKey("Q");
+        this.escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
 
         this.playerSpeed = 350;
@@ -224,6 +227,21 @@ class LevelTwo extends Phaser.Scene {
         let dt = delta / 1000;
 
         if(!this.gameStarted){
+            return;
+        }
+
+        if (this.myHealth <= 0){
+            this.bgMusic.stop();
+            this.scene.start("YouLose");
+        }
+
+        if(!this.gameStarted){
+            return;
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.escKey)) {
+            this.pauseGame();
+        }
+        if (this.paused) {
             return;
         }
 
@@ -463,11 +481,6 @@ class LevelTwo extends Phaser.Scene {
         if (this.myScore >= 150){
             this.bgMusic.stop();
             this.scene.start("YouWin");
-        }
-
-        if (this.myHealth <= 0){
-            this.bgMusic.stop();
-            this.scene.start("YouLose");
         }
 
     }
