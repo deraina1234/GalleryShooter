@@ -64,8 +64,15 @@ class Controls extends Phaser.Scene { //This is Anthony
             "Level2 -> Q -> Special Ability1\nLevel3 -> V -> Special Ability2\nBoss Fight -> T -> Special Ability3",
             30,
         ).setOrigin(0.5,0.5);
-
-        this.makeButton(game.config.width / 2, 500, "Back to Menu", () => {
+        this.add.bitmapText(
+            game.config.width / 2, 
+            500,
+            "rocketSquare",
+            "ESC - Pause",
+            48,
+        ).setOrigin(0.5,0.5);
+    
+        this.makeButton(game.config.width / 2, 550, "Back to Menu", () => {
             this.scene.start("startScreen");
             
         });
