@@ -230,11 +230,6 @@ class LevelTwo extends Phaser.Scene {
             return;
         }
 
-        if (this.myHealth <= 0){
-            this.bgMusic.stop();
-            this.scene.start("YouLose");
-        }
-
         if(!this.gameStarted){
             return;
         }
@@ -480,8 +475,15 @@ class LevelTwo extends Phaser.Scene {
 
         if (this.myScore >= 150){
             this.bgMusic.stop();
-            this.scene.start("LevelThree");
+            this.scene.start("Ability2");
         }
+
+        if (this.myHealth <= 0){
+            this.bgMusic.stop();
+            this.scene.start("YouLose");
+        }
+
+
 
     }
 

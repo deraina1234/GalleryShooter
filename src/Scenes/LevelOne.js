@@ -268,7 +268,7 @@ class LevelOne extends Phaser.Scene {
         // stopping music when moving to different scenes
         if (this.myScore >= 100){
             this.bgMusic.stop();
-            this.scene.start("LevelTwo");
+            this.scene.start("Ability1");
         }
 
         if (this.myHealth <= 0){
