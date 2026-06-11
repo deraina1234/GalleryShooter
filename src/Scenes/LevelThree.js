@@ -1,6 +1,6 @@
-class LevelTwo extends Phaser.Scene {
+class LevelThree extends Phaser.Scene {
     constructor() {
-        super("LevelTwo");
+        super("LevelThree");
 
         this.my = {sprite: {}, text: {}};
 
@@ -9,6 +9,9 @@ class LevelTwo extends Phaser.Scene {
 
         this.specialUsed = 0;
         this.maxSpecial = 3;
+
+        this.maxRapidFire = 20;     
+        this.rapidShotsLeft = 20;
 
         this.my.sprite.enemyBullet = [];
         
@@ -27,6 +30,8 @@ class LevelTwo extends Phaser.Scene {
 
         this.specialUsed = 0;
 
+        this.rapidShotsLeft = this.maxRapidFire;
+
         this.gameStarted = false;
         this.paused = false;
 
@@ -37,13 +42,14 @@ class LevelTwo extends Phaser.Scene {
 
         this.load.setPath("./assets/");
 
-        // all sprites loaded
+        // all sprites 
         this.load.image("player", "player_back.png");
         this.load.image("laser", "midnight_22.png");
         this.load.image("special", "lasershieldnice.png");
         this.load.image("enemyLaser", "laserRed02.png");
         this.load.image("enemyShip", "shipYellow_manned.png");
         this.load.image("enemyTwo", "shipBlue_manned.png");
+        this.load.image("enemyThree", "shipBeige_manned.png");
         this.load.image("tower", "pieceGreen_single09.png");
         this.load.image("tower2", "pieceGreen_single09.png");
         this.load.image("deathResult", "laserPink_groundBurst.png");
@@ -63,10 +69,9 @@ class LevelTwo extends Phaser.Scene {
     create() {
         let my = this.my;
 
-        //make sure the background photo i have fits to the display size
-        //this.add.image(game.config.width / 2, game.config.height / 2, "stars").setDisplaySize(game.config.width, game.config.height);
-
         this.gameStarted = false;
+
+        this.enemySpeed = 140;
 
         this.overlay = this.add.rectangle(
 
@@ -129,7 +134,7 @@ class LevelTwo extends Phaser.Scene {
         let dy = my.sprite.tower.y - my.sprite.enemyShip.y
 
         let distance = Math.sqrt(dx * dx + dy * dy);
-        let speed = 95;
+        let speed = this.enemySpeed;
 
         my.sprite.enemyShip.vx = (dx / distance) * speed;
         my.sprite.enemyShip.vy = (dy / distance) * speed;
@@ -149,6 +154,21 @@ class LevelTwo extends Phaser.Scene {
         my.sprite.enemyTwo.vx = (dx2 / distance2) * speed;
         my.sprite.enemyTwo.vy = (dy2 / distance2) * speed;
 
+        //enemy3
+        my.sprite.enemyThree = this.add.sprite(game.config.width / 2, this.enemyShipStartY, "enemyThree");
+        my.sprite.enemyThree.setScale(0.50);
+        my.sprite.enemyThree.scorePoints = 20;
+
+        my.sprite.enemyThree.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
+
+        let dx3 = my.sprite.enemyThree.targetTower.x - my.sprite.enemyThree.x;
+        let dy3 = my.sprite.enemyThree.targetTower.y - my.sprite.enemyThree.y;
+
+        let distance3 = Math.sqrt(dx3 * dx3 + dy3 * dy3);
+
+        my.sprite.enemyThree.vx = (dx3 / distance3) * speed;
+        my.sprite.enemyThree.vy = (dy3 / distance3) * speed;
+
 
         //sounds
         this.mySound = this.sound.add("laser_sect");
@@ -160,16 +180,19 @@ class LevelTwo extends Phaser.Scene {
         this.right = this.input.keyboard.addKey("D");
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.q = this.input.keyboard.addKey("Q");
+        this.v = this.input.keyboard.addKey("V"); 
         this.escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
 
         this.playerSpeed = 350;
         this.bulletSpeed = 275;
+        this.rapidBulletSpeed = 600;  
 
         //text
         my.text.score = this.add.bitmapText(580, 0, "rocketSquare", "Score " + this.myScore);
         my.text.health = this.add.bitmapText(500, 40, "rocketSquare", "Health " + this.myHealth + "/20");
         my.text.special = this.add.bitmapText(520, 80, "rocketSquare", "Special " + (this.maxSpecial - this.specialUsed) + "/" + this.maxSpecial);
+        my.text.rapid = this.add.bitmapText(10, 5, "rocketSquare", "Rapid Fire Shots: " + this.rapidShotsLeft + "/" + this.maxRapidFire);
 
         //background audio
         this.bgMusic = this.sound.add("music_bg");
@@ -261,21 +284,41 @@ class LevelTwo extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.space)) {
             this.shootSound.play({volume: 0.5});
             if (my.sprite.bullet.length < this.maxBullets) {
-                my.sprite.bullet.push(this.add.sprite(
-                    my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "laser").setScale(0.75)
-                );
+                let newBullet = this.add.sprite(
+                    my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "laser").setScale(0.75);
+                newBullet.speed = this.bulletSpeed;
+                my.sprite.bullet.push(newBullet);
             }
         }
 
         if (Phaser.Input.Keyboard.JustDown(this.q)) {
             if (this.specialUsed < this.maxSpecial) {
                 this.shootSound.play({volume: 0.5});
-                my.sprite.bullet.push(this.add.sprite(
-                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(1.3).setTint(0x4444aa)
-                );
+                let specialBullet = this.add.sprite(
+                    my.sprite.player.x, my.sprite.player.y-50, "special").setScale(1.3).setTint(0x4444aa);
+                specialBullet.speed = this.bulletSpeed;
+                my.sprite.bullet.push(specialBullet);
                 this.specialUsed += 1;
                 this.updateSpecial();
             }  else {
+                this.specialOutSound.play({volume: 2.0});
+            }
+        }
+
+        //special ability two, press V, u shoot a faster bullet, u get a total of 20
+        if (Phaser.Input.Keyboard.JustDown(this.v)) {
+            if (this.rapidShotsLeft > 0) {
+                this.shootSound.play({volume: 0.5});
+                if (my.sprite.bullet.length < this.maxBullets) {
+                    let rapidBullet = this.add.sprite(
+                        my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "laser")
+                        .setScale(0.75).setTint(0xff7777);
+                    rapidBullet.speed = this.rapidBulletSpeed; 
+                    my.sprite.bullet.push(rapidBullet);
+                    this.rapidShotsLeft -= 1;
+                    this.updateRapidFire();
+                }
+            } else {
                 this.specialOutSound.play({volume: 2.0});
             }
         }
@@ -298,7 +341,7 @@ class LevelTwo extends Phaser.Scene {
                     let dy = my.sprite.tower.y - enemyShip.y
 
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    let speed = 75;
+                    let speed = this.enemySpeed;
 
                     enemyShip.vx = (dx / distance) * speed;
                     enemyShip.vy = (dy / distance) * speed;
@@ -322,10 +365,35 @@ class LevelTwo extends Phaser.Scene {
                     let dy = enemyTwo.targetTower.y - enemyTwo.y;
 
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    let speed = 95;
+                    let speed = this.enemySpeed;
 
                     enemyTwo.vx = (dx / distance) * speed;
                     enemyTwo.vy = (dy / distance) * speed;
+         }}
+
+         // enemy three spawns from the middle every time
+         let enemyThree = my.sprite.enemyThree;
+            if (enemyThree.visible) {
+                enemyThree.x += enemyThree.vx * dt;
+                enemyThree.y += enemyThree.vy * dt;
+
+                enemyThree.x += Math.sin(time / 200) * 1.5;
+
+
+                if (enemyThree.y > game.config.height || enemyThree.x > game.config.width || enemyThree.x < 0) {
+                    enemyThree.x = game.config.width / 2;
+                    enemyThree.y = 80;
+
+                    enemyThree.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
+
+                    let dx = enemyThree.targetTower.x - enemyThree.x;
+                    let dy = enemyThree.targetTower.y - enemyThree.y;
+
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    let speed = this.enemySpeed;
+
+                    enemyThree.vx = (dx / distance) * speed;
+                    enemyThree.vy = (dy / distance) * speed;
          }}
 
         if (enemyShip.visible && this.collides(enemyShip, my.sprite.tower)){
@@ -346,7 +414,7 @@ class LevelTwo extends Phaser.Scene {
                     let dy = my.sprite.tower.y - enemyShip.y
 
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    let speed = 75;
+                    let speed = this.enemySpeed;
 
                     enemyShip.vx = (dx / distance) * speed;
                     enemyShip.vy = (dy / distance) * speed;
@@ -369,13 +437,37 @@ class LevelTwo extends Phaser.Scene {
             let dy = enemyTwo.targetTower.y - enemyTwo.y;
 
             let distance = Math.sqrt(dx * dx + dy * dy);
-            let speed = 95;
+            let speed = this.enemySpeed;
 
             enemyTwo.vx = (dx / distance) * speed;
             enemyTwo.vy = (dy / distance) * speed;
         }
 
-        // Check for collision with the enemyShip
+        if (enemyThree.visible && this.collides(enemyThree, enemyThree.targetTower)){
+            this.myScore -= 10;
+            this.updateScore();
+
+            this.myHealth -= 1;
+            this.updatehealth();
+
+            this.deathSound.play({volume: 2.0});
+
+            enemyThree.x = game.config.width / 2;
+            enemyThree.y = 80;
+
+            enemyThree.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
+
+            let dx = enemyThree.targetTower.x - enemyThree.x;
+            let dy = enemyThree.targetTower.y - enemyThree.y;
+
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            let speed = this.enemySpeed;
+
+            enemyThree.vx = (dx / distance) * speed;
+            enemyThree.vy = (dy / distance) * speed;
+        }
+
+
         // Check for collision with the enemyShip
         for (let bullet of my.sprite.bullet) {
             if (enemyTwo.visible && this.collides(enemyTwo, bullet, 0.5)) {
@@ -405,7 +497,7 @@ class LevelTwo extends Phaser.Scene {
                     let dy = enemyTwo.targetTower.y - enemyTwo.y;
 
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    let speed = 95;
+                    let speed = this.enemySpeed;
 
                     enemyTwo.vx = (dx / distance) * speed;
                     enemyTwo.vy = (dy / distance) * speed;
@@ -439,7 +531,7 @@ class LevelTwo extends Phaser.Scene {
                     let dy = my.sprite.tower.y - enemyShip.y
 
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    let speed = 75;
+                    let speed = this.enemySpeed;
 
                     enemyShip.vx = (dx / distance) * speed;
                     enemyShip.vy = (dy / distance) * speed;
@@ -448,9 +540,45 @@ class LevelTwo extends Phaser.Scene {
             }
         }
 
-        // bullet motion
         for (let bullet of my.sprite.bullet) {
-            bullet.y -= this.bulletSpeed * dt;
+            if (enemyThree.visible && this.collides(enemyThree, bullet, 0.5)) {
+                this.explosion = this.add.sprite(enemyThree.x, enemyThree.y, "deathResult").setScale(0.25).play("explosion");
+                // clear bullets
+                bullet.y = -100;
+                enemyThree.visible = false;
+                enemyThree.x = -100;
+                // update score
+                this.myScore += enemyThree.scorePoints;
+                this.updateScore();
+                this.mySound.play({volume: 0.5});
+
+                this.time.delayedCall(200, () => {
+                    this.explosion.destroy();
+
+                    let h = this.my.sprite.enemyThree;
+                    h.visible = true;
+
+                    enemyThree.x = game.config.width / 2;
+                    enemyThree.y = 80;
+
+                    enemyThree.targetTower = Math.random() < 0.5 ? my.sprite.towerTwo : my.sprite.tower;
+
+                    let dx = enemyThree.targetTower.x - enemyThree.x;
+                    let dy = enemyThree.targetTower.y - enemyThree.y;
+
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    let speed = this.enemySpeed;
+
+                    enemyThree.vx = (dx / distance) * speed;
+                    enemyThree.vy = (dy / distance) * speed;
+
+                }, this);
+            }
+        }
+
+
+        for (let bullet of my.sprite.bullet) {
+            bullet.y -= bullet.speed * dt;
         }
 
 
@@ -480,13 +608,11 @@ class LevelTwo extends Phaser.Scene {
 
         if (this.myScore >= 150){
             this.bgMusic.stop();
-            this.scene.start("LevelThree");
+            this.scene.start("BossBattle");
         }
 
     }
 
-
-    // A center-radius AABB collision check from audio practice in class assignment
     collides(a, b, shrink = 1) {
         if (Math.abs(a.x - b.x) > (a.displayWidth/2 + b.displayWidth/2) * shrink) return false;
         if (Math.abs(a.y - b.y) > (a.displayHeight/2 + b.displayHeight/2) * shrink) return false;
@@ -506,6 +632,11 @@ class LevelTwo extends Phaser.Scene {
     updateSpecial(){
         let my = this.my;
         my.text.special.setText("Special " + (this.maxSpecial - this.specialUsed) + "/" + this.maxSpecial);
+    }
+
+    updateRapidFire(){
+        let my = this.my;
+        my.text.rapid.setText("Rapid Fire Shots: " + this.rapidShotsLeft + "/" + this.maxRapidFire);
     }
 
     pauseGame() {
