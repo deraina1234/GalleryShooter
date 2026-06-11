@@ -5,11 +5,15 @@ class BossBattle extends Phaser.Scene {
 
         this.my = {sprite: {}, text: {}};
 
-        this.my.sprite.bullet = [];   
+        this.my.sprite.bullet = []; 
+        this.my.sprite.enemyBullet = [];  
         this.maxBullets = 5;
         this.myHealth = 15;
         this.bossHealth = 15;
+        this.path = 0;
         
+        this.maxSpecialShots = 3;
+        this.specialShotsLeft = 3;
     }
 
     init() {
@@ -17,6 +21,7 @@ class BossBattle extends Phaser.Scene {
         this.bossHealth = 30;
 
         this.my.sprite.bullet = [];
+        this.my.sprite.enemyBullet = [];
 
         this.gameStarted = false;
 
@@ -30,15 +35,16 @@ class BossBattle extends Phaser.Scene {
         this.load.image("enemyShip", "shipBeige_manned.png");
         this.load.image("laser", "midnight_22.png");
 
-        this.load.image("tower", "pieceGreen_single09.png")
 
         this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
+        this.load.image("enemyLaser", "laserRed02.png");
 
         this.load.audio("laser_sect", "impactMetal_light_003.ogg")
         this.load.audio("music_bg", "magpiemusic-action-trailer-promo-rock-513687.mp3")
         this.load.audio("user_click", "click1.ogg")
         this.load.audio("shoot", "laserSmall_001.ogg")
         this.mySound = this.sound.add("laser_sect");
+        this.load.audio("specialOut", "freesound_community-wrong-47985.mp3")
 
     }
 
@@ -93,28 +99,31 @@ class BossBattle extends Phaser.Scene {
         my.sprite.player.setScale(1.00);
 
         my.sprite.enemyShip = this.add.sprite(game.config.width/2, 125, "enemyShip");
-        my.sprite.enemyShip.setScale(1.25);
+        my.sprite.enemyShip.setScale(1);
         my.sprite.enemyShip.scorePoints = 150;
 
-        my.sprite.tower = this.add.sprite((0.9 * game.config.width), (0.85 * game.config.height) + 40, "tower");
-        my.sprite.tower.setScale(2.5);
 
         this.mySound = this.sound.add("laser_sect");
         this.shootSound = this.sound.add("shoot");
         this.deathSound = this.sound.add("death");
+        this.specialOut = this.sound.add("specialOut");
 
         this.left = this.input.keyboard.addKey("A");
         this.right = this.input.keyboard.addKey("D");
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.v = this.input.keyboard.addKey("V");
         this.escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         this.playerSpeed = 350;
         this.bulletSpeed = 275;
-
+        this.enemyBulletSpeed = 200;
+        this.enemyShootTimer = 0;
+        this.enemyShootInterval = 1000;
 
         my.text.bossHealth = this.add.bitmapText(457, 0, "rocketSquare", "Boss Health " + this.bossHealth);
         my.text.health = this.add.bitmapText(500, 40, "rocketSquare",    "Health " + this.myHealth + "/15");
-
+        my.text.special = this.add.bitmapText(10, 5, "rocketSquare", "Special Shots: " + this.specialShotsLeft + "/" + this.maxSpecialShots);
+        
         //background audio
         this.bgMusic = this.sound.add("music_bg");
         this.bgMusic.play({loop: true, volume: 0.5});
@@ -165,7 +174,50 @@ class BossBattle extends Phaser.Scene {
             }
         }
 
+        if (Phaser.Input.Keyboard.JustDown(this.v)) {
+            if (this.specialShotsLeft > 0) {
+                this.shootSound.play({volume: 0.5});
+                if (my.sprite.bullet.length < this.maxBullets) {
+                    let specialBullet = this.add.sprite(
+                        my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "laser")
+                        .setScale(2).setTint(0x4444aa);
+                    specialBullet.isSpecial = true;
+                    my.sprite.bullet.push(specialBullet);
+                    this.specialShotsLeft -= 1;
+                    this.updateSpecialShots();
+                }
+            } else {
+                this.specialOut.play({volume: 2.0});
+            }
+        }
+
         my.sprite.bullet = my.sprite.bullet.filter((bullet) => bullet.y > -(bullet.displayHeight/2));
+
+        let enemyShip = my.sprite.enemyShip;
+        this.enemyShootTimer += delta;
+        
+        if (enemyShip.visible && this.enemyShootTimer > this.enemyShootInterval) {
+            this.shootSound.play({volume: 0.5});
+            
+            let targetX = my.sprite.player.x;
+            let targetY = my.sprite.player.y;
+            
+            // Calculate direction to target
+            let dx = targetX - enemyShip.x;
+            let dy = targetY - enemyShip.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            
+            let bullet = this.add.sprite(enemyShip.x, enemyShip.y + (enemyShip.displayHeight/2), "enemyLaser").setScale(0.75);
+            bullet.vx = (dx / distance) * this.enemyBulletSpeed;
+            bullet.vy = (dy / distance) * this.enemyBulletSpeed;
+
+            bullet.rotation = Math.atan2(dy, dx) + Math.PI / 2;
+            
+            my.sprite.enemyBullet.push(bullet);
+            this.enemyShootTimer = 0;
+        }
+
+        my.sprite.enemyBullet = my.sprite.enemyBullet.filter((bullet) => bullet.y < game.config.height + 50);
 
 
         if (this.myScore >= 150){
@@ -177,14 +229,27 @@ class BossBattle extends Phaser.Scene {
             this.bgMusic.stop();
             this.scene.start("YouLose");
         }
-        let enemyShip = my.sprite.enemyShip;
-
         for (let bullet of my.sprite.bullet) {
             if (enemyShip.visible && this.collides(enemyShip, bullet, 0.8)) {
                 bullet.y = -100;
                 this.mySound.play({volume: 0.5});
-                this.bossHealth -= 1;
+                if(bullet.isSpecial){
+                    this.bossHealth -= 5;
+                }
+                else{
+                    this.bossHealth -= 1;
+                }
                 this.updateBossHealth();
+            }
+        }
+
+        // Check if player is hit by enemy bullets
+        for (let bullet of my.sprite.enemyBullet) {
+            if (this.collides(my.sprite.player, bullet, 0.8)) {
+                bullet.y = game.config.height + 100;
+                this.myHealth -= 1;
+                this.updatehealth();
+                this.deathSound.play({volume: 2.0});
             }
         }
         if(this.bossHealth <= 0){
@@ -196,11 +261,24 @@ class BossBattle extends Phaser.Scene {
             this.scene.start("YouLose");
         }
 
+        // bullets motion
+        for (let bullet of my.sprite.enemyBullet) {
+            bullet.x += bullet.vx * dt;
+            bullet.y += bullet.vy * dt;
+        }
+
 
         // bullets motion
         for (let bullet of my.sprite.bullet) {
             bullet.y -= this.bulletSpeed * dt;
         }
+
+        this.path += delta * 0.0008
+        let pathT = this.path;
+        my.sprite.enemyShip.setPosition(
+            400 + 280 * Math.sin(pathT),
+            130 + 80 * Math.sin(2 * pathT)
+        )
 
 
 
@@ -255,5 +333,10 @@ class BossBattle extends Phaser.Scene {
         this.continueGame.destroy();
         this.returnMenu.destroy();
     }
+
+    updateSpecialShots(){
+        let my = this.my;
+        my.text.special.setText("Special Shots: " + this.specialShotsLeft + "/" + this.maxSpecialShots);
+    }                  
 
 }

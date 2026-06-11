@@ -608,7 +608,7 @@ class LevelThree extends Phaser.Scene {
 
         if (this.myScore >= 150){
             this.bgMusic.stop();
-            this.scene.start("BossBattle");
+            this.scene.start("Ability3");
         }
 
     }
