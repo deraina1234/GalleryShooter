@@ -73,6 +73,7 @@ class Controls extends Phaser.Scene { //This is Anthony
         ).setOrigin(0.5,0.5);
     
         this.makeButton(game.config.width / 2, 550, "Back to Menu", () => {
+            this.menuSound.stop();
             this.scene.start("startScreen");
             
         });
